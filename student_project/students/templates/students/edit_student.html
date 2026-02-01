@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Student</title>
+</head>
+<body>
+
+<h2>Edit Student</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    Name:<br>
+    <input type="text" name="name" value="{{ student.name }}"><br><br>
+
+    Roll No:<br>
+    <input type="text" name="roll_no" value="{{ student.roll_no }}"><br><br>
+
+    Branch:<br>
+    <input type="text" name="branch" value="{{ student.branch }}"><br><br>
+
+    Year:<br>
+    <input type="number" name="year" value="{{ student.year }}"><br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+<br>
+<a href="{% url 'student_list' %}">Back to Student List</a>
+
+</body>
+</html>
