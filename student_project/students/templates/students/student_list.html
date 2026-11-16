@@ -29,10 +29,8 @@
         <td>
     <a href="{% url 'edit_student' student.id %}">Edit</a>
     |
-    <a href="{% url 'delete_student' student.id %}"
-       onclick="return confirm('Are you sure?')">
-       Delete
-    </a>
+    <form method="post" action="{% url 'delete_student' student.id %}">
+    {% csrf_token %}<button type="submit">Delete</button></form>
 </td>
 
     </tr>
@@ -42,3 +40,4 @@
 
 </body>
 </html>
+
