@@ -1,45 +1,32 @@
-from django.shortcuts import render, redirect
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 from .models import Student
+from .forms import StudentForm
 
-
+@staff_member_required
 def student_list(request):
-    students = Student.objects.all()
-    return render(request, 'students/student_list.html', {
-        'students': students
-    })
+    return render(request, 'students/student_list.html', {'students': Student.objects.all()})
 
-
+@staff_member_required
 def add_student(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        roll_no = request.POST.get('roll_no')
-        branch = request.POST.get('branch')
-        year = request.POST.get('year')
-
-        Student.objects.create(
-            name=name,
-            roll_no=roll_no,
-            branch=branch,
-            year=year
-        )
+    form = StudentForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
         return redirect('student_list')
+    return render(request, 'students/add_student.html', {'form': form})
 
-    return render(request, 'students/add_student.html')
-
-
+@staff_member_required
 def edit_student(request, id):
-    student = Student.objects.get(id=id)
-
-    if request.method == 'POST':
-        student.name = request.POST.get('name')
-        student.roll_no = request.POST.get('roll_no')
-        student.branch = request.POST.get('branch')
-        student.year = request.POST.get('year')
-        student.save()
+    student = get_object_or_404(Student, id=id)
+    form = StudentForm(request.POST or None, instance=student)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
         return redirect('student_list')
+    return render(request, 'students/edit_student.html', {'form': form, 'student': student})
 
-    return render(request, 'students/edit_student.html', {'student': student})
+@staff_member_required
+@require_POST
 def delete_student(request, id):
-    student = Student.objects.get(id=id)
-    student.delete()
+    get_object_or_404(Student, id=id).delete()
     return redirect('student_list')
